@@ -115,27 +115,17 @@ func (a *Auth) handleLogOnResponse(packet *Packet) {
 		go a.client.heartbeatLoop(time.Duration(body.GetOutOfGameHeartbeatSeconds()))
 
 		a.client.Emit(&LoggedOnEvent{
-			Result:                    EResult(body.GetEresult()),
-			ExtendedResult:            EResult(body.GetEresultExtended()),
-			OutOfGameSecsPerHeartbeat: body.GetOutOfGameHeartbeatSeconds(),
-			InGameSecsPerHeartbeat:    body.GetInGameHeartbeatSeconds(),
-			PublicIp:                  body.GetPublicIp(),
-			ServerTime:                body.GetRtime32ServerTime(),
-			AccountFlags:              EAccountFlags(body.GetAccountFlags()),
-			ClientSteamId:             SteamId(body.GetClientSuppliedSteamid()),
-			EmailDomain:               body.GetEmailDomain(),
-			CellId:                    body.GetCellId(),
-			CellIdPingThreshold:       body.GetCellIdPingThreshold(),
-			Steam2Ticket:              body.GetSteam2Ticket(),
-			UsePics:                   body.GetUsePics(),
-			WebApiUserNonce:           body.GetWebapiAuthenticateUserNonce(),
-			IpCountryCode:             body.GetIpCountryCode(),
-			VanityUrl:                 body.GetVanityUrl(),
-			NumLoginFailuresToMigrate: body.GetCountLoginfailuresToMigrate(),
-			NumDisconnectsToMigrate:   body.GetCountDisconnectsToMigrate(),
+			Result:         EResult(body.GetEresult()),
+			ExtendedResult: EResult(body.GetEresultExtended()),
+			AccountFlags:   EAccountFlags(body.GetAccountFlags()),
+			ClientSteamId:  SteamId(body.GetClientSuppliedSteamid()),
+			Body:           body,
 		})
 	} else if result == EResult_Fail || result == EResult_ServiceUnavailable || result == EResult_TryAnotherCM {
 		// some error on Steam's side, we'll get an EOF later
+		a.client.Emit(&SteamFailureEvent{
+			Result: EResult(body.GetEresult()),
+		})
 	} else {
 		a.client.Emit(&LogOnFailedEvent{
 			Result: EResult(body.GetEresult()),

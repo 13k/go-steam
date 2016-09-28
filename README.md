@@ -53,3 +53,4 @@ Then, after generating new Go source files, update `go-steam` as necessary.
 ## License
 
 Steam for Go is licensed under the New BSD License. More information can be found in LICENSE.txt.
+

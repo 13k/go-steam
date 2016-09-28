@@ -371,8 +371,8 @@ func (c *Client) handleClientCMList(packet *Packet) {
 	l := make([]*netutil.PortAddr, 0)
 	for i, ip := range body.GetCmAddresses() {
 		l = append(l, &netutil.PortAddr{
-			readIp(ip),
-			uint16(body.GetCmPorts()[i]),
+			IP:   readIp(ip),
+			Port: uint16(body.GetCmPorts()[i]),
 		})
 	}
 
