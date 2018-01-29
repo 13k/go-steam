@@ -2,9 +2,8 @@ package steamid
 
 import (
 	"fmt"
-	"strconv"
-	"errors"
 	"regexp"
+	"strconv"
 	"strings"
 )
 
@@ -18,8 +17,29 @@ const (
 
 type SteamId uint64
 
+func fromAccountId(id uint32) SteamId {
+	return NewIdAdv(id, 1, 1, 1)
+}
+
+func fromAccountIdStr(id string) (SteamId, error) {
+	accountId, err := strconv.ParseUint(id, 10, 32)
+	if err != nil {
+		return SteamId(0), err
+	}
+	return fromAccountId(uint32(accountId)), nil
+}
+
 func NewId(id string) (SteamId, error) {
-	valid, err := regexp.MatchString(`STEAM_[0-5]:[01]:\d+`, id)
+	valid, err := regexp.MatchString(`[U:1:[0-9]+]`, id)
+	if err != nil {
+		return SteamId(0), err
+	}
+	if valid {
+		id = id[5 : len(id)-1]
+		return fromAccountIdStr(id)
+	}
+
+	valid, err = regexp.MatchString(`STEAM_[0-5]:[01]:\d+`, id)
 	if err != nil {
 		return SteamId(0), err
 	}
@@ -35,14 +55,21 @@ func NewId(id string) (SteamId, error) {
 		accountType := int32(1) //EAccountType_Individual
 		accountId := (uint32(accId) << 1) | uint32(authServer)
 		return NewIdAdv(uint32(accountId), 1, int32(universe), accountType), nil
-	} else {
-		newid, err := strconv.ParseUint(id, 10, 64)
-		if err != nil {
-			return SteamId(0), err
-		}
-		return SteamId(newid), nil
 	}
-	return SteamId(0), errors.New(fmt.Sprintf("Invalid SteamId: %s\n", id))
+
+	valid, err = regexp.MatchString(`^[0-9]{7,9}$`, id)
+	if err != nil {
+		return SteamId(0), err
+	}
+	if valid {
+		return fromAccountIdStr(id)
+	}
+
+	newid, err := strconv.ParseUint(id, 10, 64)
+	if err != nil {
+		return SteamId(0), err
+	}
+	return SteamId(newid), nil
 }
 
 func NewIdAdv(accountId, instance uint32, universe int32, accountType int32) SteamId {
