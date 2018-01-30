@@ -2,7 +2,6 @@ package steam
 
 import (
 	. "github.com/faceit/go-steam/protocol/steamlang"
-	. "github.com/faceit/go-steam/steamid"
 )
 
 type TradeProposedEvent struct {

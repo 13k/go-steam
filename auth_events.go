@@ -3,7 +3,6 @@ package steam
 import (
 	. "github.com/faceit/go-steam/protocol/protobuf"
 	. "github.com/faceit/go-steam/protocol/steamlang"
-	. "github.com/faceit/go-steam/steamid"
 )
 
 type LoggedOnEvent struct {

@@ -8,7 +8,7 @@ import (
 	. "github.com/faceit/go-steam/protocol"
 	. "github.com/faceit/go-steam/protocol/protobuf"
 	. "github.com/faceit/go-steam/protocol/steamlang"
-	. "github.com/faceit/go-steam/steamid"
+	"github.com/faceit/go-steam/steamid"
 	"github.com/golang/protobuf/proto"
 )
 
@@ -76,7 +76,7 @@ func (a *Auth) LogOn(details *LogOnDetails) {
 		logon.ShouldRememberPassword = proto.Bool(details.ShouldRememberPassword)
 	}
 
-	atomic.StoreUint64(&a.client.steamId, uint64(NewIdAdv(0, 1, int32(EUniverse_Public), int32(EAccountType_Individual))))
+	atomic.StoreUint64(&a.client.steamId, steamid.NewIdAdv(0, 1, int32(EUniverse_Public), EAccountType_Individual).ToUint64())
 
 	a.client.Write(NewClientMsgProtobuf(EMsg_ClientLogon, logon))
 }

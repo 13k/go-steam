@@ -5,46 +5,47 @@ import (
 	"sync"
 
 	. "github.com/faceit/go-steam/protocol/steamlang"
+	"github.com/faceit/go-steam/steamid"
 	. "github.com/faceit/go-steam/steamid"
 )
 
-// Friends list is a thread safe map
+// FriendsList is a thread safe map
 // They can be iterated over like so:
 // 	for id, friend := range client.Social.Friends.GetCopy() {
 // 		log.Println(id, friend.Name)
 // 	}
 type FriendsList struct {
 	mutex sync.RWMutex
-	byId  map[SteamId]*Friend
+	byId  map[steamid.SteamId]*Friend
 }
 
-// Returns a new friends list
+// NewFriendsList builds a new friends list
 func NewFriendsList() *FriendsList {
-	return &FriendsList{byId: make(map[SteamId]*Friend)}
+	return &FriendsList{byId: make(map[steamid.SteamId]*Friend)}
 }
 
-// Adds a friend to the friend list
+// Add adds a friend to the friend list
 func (list *FriendsList) Add(friend Friend) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
-	_, exists := list.byId[friend.SteamId]
+	_, exists := list.byId[steamid.SteamId(friend.SteamId)]
 	if !exists { //make sure this doesnt already exist
-		list.byId[friend.SteamId] = &friend
+		list.byId[steamid.SteamId(friend.SteamId)] = &friend
 	}
 }
 
-// Removes a friend from the friend list
-func (list *FriendsList) Remove(id SteamId) {
+// Remove removes a friend from the friend list
+func (list *FriendsList) Remove(id steamid.SteamId) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	delete(list.byId, id)
 }
 
 // Returns a copy of the friends map
-func (list *FriendsList) GetCopy() map[SteamId]Friend {
+func (list *FriendsList) GetCopy() map[steamid.SteamId]Friend {
 	list.mutex.RLock()
 	defer list.mutex.RUnlock()
-	flist := make(map[SteamId]Friend)
+	flist := make(map[steamid.SteamId]Friend)
 	for key, friend := range list.byId {
 		flist[key] = *friend
 	}
@@ -52,7 +53,7 @@ func (list *FriendsList) GetCopy() map[SteamId]Friend {
 }
 
 // Returns a copy of the friend of a given SteamId
-func (list *FriendsList) ById(id SteamId) (Friend, error) {
+func (list *FriendsList) ById(id steamid.SteamId) (Friend, error) {
 	list.mutex.RLock()
 	defer list.mutex.RUnlock()
 	if val, ok := list.byId[id]; ok {
@@ -69,7 +70,7 @@ func (list *FriendsList) Count() int {
 }
 
 //Setter methods
-func (list *FriendsList) SetName(id SteamId, name string) {
+func (list *FriendsList) SetName(id steamid.SteamId, name string) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	if val, ok := list.byId[id]; ok {
@@ -77,7 +78,7 @@ func (list *FriendsList) SetName(id SteamId, name string) {
 	}
 }
 
-func (list *FriendsList) SetAvatar(id SteamId, hash []byte) {
+func (list *FriendsList) SetAvatar(id steamid.SteamId, hash []byte) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	if val, ok := list.byId[id]; ok {
@@ -85,7 +86,7 @@ func (list *FriendsList) SetAvatar(id SteamId, hash []byte) {
 	}
 }
 
-func (list *FriendsList) SetRelationship(id SteamId, relationship EFriendRelationship) {
+func (list *FriendsList) SetRelationship(id steamid.SteamId, relationship EFriendRelationship) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	if val, ok := list.byId[id]; ok {
@@ -93,7 +94,7 @@ func (list *FriendsList) SetRelationship(id SteamId, relationship EFriendRelatio
 	}
 }
 
-func (list *FriendsList) SetPersonaState(id SteamId, state EPersonaState) {
+func (list *FriendsList) SetPersonaState(id steamid.SteamId, state EPersonaState) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	if val, ok := list.byId[id]; ok {
@@ -101,7 +102,7 @@ func (list *FriendsList) SetPersonaState(id SteamId, state EPersonaState) {
 	}
 }
 
-func (list *FriendsList) SetPersonaStateFlags(id SteamId, flags EPersonaStateFlag) {
+func (list *FriendsList) SetPersonaStateFlags(id steamid.SteamId, flags EPersonaStateFlag) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	if val, ok := list.byId[id]; ok {
@@ -109,7 +110,7 @@ func (list *FriendsList) SetPersonaStateFlags(id SteamId, flags EPersonaStateFla
 	}
 }
 
-func (list *FriendsList) SetGameAppId(id SteamId, gameappid uint32) {
+func (list *FriendsList) SetGameAppId(id steamid.SteamId, gameappid uint32) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	if val, ok := list.byId[id]; ok {
@@ -117,7 +118,7 @@ func (list *FriendsList) SetGameAppId(id SteamId, gameappid uint32) {
 	}
 }
 
-func (list *FriendsList) SetGameId(id SteamId, gameid uint64) {
+func (list *FriendsList) SetGameId(id steamid.SteamId, gameid uint64) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	if val, ok := list.byId[id]; ok {
@@ -125,7 +126,7 @@ func (list *FriendsList) SetGameId(id SteamId, gameid uint64) {
 	}
 }
 
-func (list *FriendsList) SetGameName(id SteamId, name string) {
+func (list *FriendsList) SetGameName(id steamid.SteamId, name string) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	if val, ok := list.byId[id]; ok {
@@ -135,7 +136,7 @@ func (list *FriendsList) SetGameName(id SteamId, name string) {
 
 // A Friend
 type Friend struct {
-	SteamId           SteamId `json:",string"`
+	SteamId           steamid.SteamId `json:",string"`
 	Name              string
 	Avatar            []byte
 	Relationship      EFriendRelationship

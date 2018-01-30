@@ -7,10 +7,11 @@ import (
 	"encoding/binary"
 	. "github.com/faceit/go-steam/protocol/protobuf"
 	"github.com/faceit/go-steam/rwu"
-	"github.com/faceit/go-steam/steamid"
 	"github.com/golang/protobuf/proto"
 	"io"
 )
+
+type SteamId uint64
 
 const UdpHeader_MAGIC uint32 = 0x31305356
 
@@ -283,7 +284,7 @@ type ExtendedClientMsgHdr struct {
 	TargetJobID   uint64
 	SourceJobID   uint64
 	HeaderCanary  uint8
-	SteamID       steamid.SteamId
+	SteamID       SteamId
 	SessionID     int32
 }
 
@@ -363,7 +364,7 @@ func (d *ExtendedClientMsgHdr) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamID = steamid.SteamId(t1)
+	d.SteamID = SteamId(t1)
 	d.SessionID, err = rwu.ReadInt32(r)
 	return err
 }
@@ -949,7 +950,7 @@ func (d *MsgClientRequestedClientStats) Deserialize(r io.Reader) error {
 }
 
 type MsgClientP2PIntroducerMessage struct {
-	SteamID     steamid.SteamId
+	SteamID     SteamId
 	RoutingType EIntroducerRouting
 	Data        []uint8
 	DataLen     uint32
@@ -989,7 +990,7 @@ func (d *MsgClientP2PIntroducerMessage) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamID = steamid.SteamId(t0)
+	d.SteamID = SteamId(t0)
 	t1, err := rwu.ReadInt32(r)
 	if err != nil {
 		return err
@@ -1005,7 +1006,7 @@ func (d *MsgClientP2PIntroducerMessage) Deserialize(r io.Reader) error {
 
 type MsgClientOGSBeginSession struct {
 	AccountType uint8
-	AccountId   steamid.SteamId
+	AccountId   SteamId
 	AppId       uint32
 	TimeStarted uint32
 }
@@ -1046,7 +1047,7 @@ func (d *MsgClientOGSBeginSession) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.AccountId = steamid.SteamId(t0)
+	d.AccountId = SteamId(t0)
 	d.AppId, err = rwu.ReadUint32(r)
 	if err != nil {
 		return err
@@ -1439,7 +1440,7 @@ func (d *MsgGSGetReputationResponse) Deserialize(r io.Reader) error {
 }
 
 type MsgGSDeny struct {
-	SteamId    steamid.SteamId
+	SteamId    SteamId
 	DenyReason EDenyReason
 }
 
@@ -1467,14 +1468,14 @@ func (d *MsgGSDeny) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamId = steamid.SteamId(t0)
+	d.SteamId = SteamId(t0)
 	t1, err := rwu.ReadInt32(r)
 	d.DenyReason = EDenyReason(t1)
 	return err
 }
 
 type MsgGSApprove struct {
-	SteamId steamid.SteamId
+	SteamId SteamId
 }
 
 func NewMsgGSApprove() *MsgGSApprove {
@@ -1497,12 +1498,12 @@ func (d *MsgGSApprove) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamId = steamid.SteamId(t0)
+	d.SteamId = SteamId(t0)
 	return err
 }
 
 type MsgGSKick struct {
-	SteamId          steamid.SteamId
+	SteamId          SteamId
 	DenyReason       EDenyReason
 	WaitTilMapChange int32
 }
@@ -1535,7 +1536,7 @@ func (d *MsgGSKick) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamId = steamid.SteamId(t0)
+	d.SteamId = SteamId(t0)
 	t1, err := rwu.ReadInt32(r)
 	if err != nil {
 		return err
@@ -1546,8 +1547,8 @@ func (d *MsgGSKick) Deserialize(r io.Reader) error {
 }
 
 type MsgGSGetUserGroupStatus struct {
-	SteamIdUser  steamid.SteamId
-	SteamIdGroup steamid.SteamId
+	SteamIdUser  SteamId
+	SteamIdGroup SteamId
 }
 
 func NewMsgGSGetUserGroupStatus() *MsgGSGetUserGroupStatus {
@@ -1574,18 +1575,18 @@ func (d *MsgGSGetUserGroupStatus) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdUser = steamid.SteamId(t0)
+	d.SteamIdUser = SteamId(t0)
 	t1, err := rwu.ReadUint64(r)
 	if err != nil {
 		return err
 	}
-	d.SteamIdGroup = steamid.SteamId(t1)
+	d.SteamIdGroup = SteamId(t1)
 	return err
 }
 
 type MsgGSGetUserGroupStatusResponse struct {
-	SteamIdUser      steamid.SteamId
-	SteamIdGroup     steamid.SteamId
+	SteamIdUser      SteamId
+	SteamIdGroup     SteamId
 	ClanRelationship EClanRelationship
 	ClanRank         EClanRank
 }
@@ -1622,12 +1623,12 @@ func (d *MsgGSGetUserGroupStatusResponse) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdUser = steamid.SteamId(t0)
+	d.SteamIdUser = SteamId(t0)
 	t1, err := rwu.ReadUint64(r)
 	if err != nil {
 		return err
 	}
-	d.SteamIdGroup = steamid.SteamId(t1)
+	d.SteamIdGroup = SteamId(t1)
 	t2, err := rwu.ReadInt32(r)
 	if err != nil {
 		return err
@@ -1639,7 +1640,7 @@ func (d *MsgGSGetUserGroupStatusResponse) Deserialize(r io.Reader) error {
 }
 
 type MsgClientJoinChat struct {
-	SteamIdChat    steamid.SteamId
+	SteamIdChat    SteamId
 	IsVoiceSpeaker bool
 }
 
@@ -1667,17 +1668,17 @@ func (d *MsgClientJoinChat) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdChat = steamid.SteamId(t0)
+	d.SteamIdChat = SteamId(t0)
 	d.IsVoiceSpeaker, err = rwu.ReadBool(r)
 	return err
 }
 
 type MsgClientChatEnter struct {
-	SteamIdChat   steamid.SteamId
-	SteamIdFriend steamid.SteamId
+	SteamIdChat   SteamId
+	SteamIdFriend SteamId
 	ChatRoomType  EChatRoomType
-	SteamIdOwner  steamid.SteamId
-	SteamIdClan   steamid.SteamId
+	SteamIdOwner  SteamId
+	SteamIdClan   SteamId
 	ChatFlags     uint8
 	EnterResponse EChatRoomEnterResponse
 	NumMembers    int32
@@ -1731,12 +1732,12 @@ func (d *MsgClientChatEnter) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdChat = steamid.SteamId(t0)
+	d.SteamIdChat = SteamId(t0)
 	t1, err := rwu.ReadUint64(r)
 	if err != nil {
 		return err
 	}
-	d.SteamIdFriend = steamid.SteamId(t1)
+	d.SteamIdFriend = SteamId(t1)
 	t2, err := rwu.ReadInt32(r)
 	if err != nil {
 		return err
@@ -1746,12 +1747,12 @@ func (d *MsgClientChatEnter) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdOwner = steamid.SteamId(t3)
+	d.SteamIdOwner = SteamId(t3)
 	t4, err := rwu.ReadUint64(r)
 	if err != nil {
 		return err
 	}
-	d.SteamIdClan = steamid.SteamId(t4)
+	d.SteamIdClan = SteamId(t4)
 	d.ChatFlags, err = rwu.ReadUint8(r)
 	if err != nil {
 		return err
@@ -1766,8 +1767,8 @@ func (d *MsgClientChatEnter) Deserialize(r io.Reader) error {
 }
 
 type MsgClientChatMsg struct {
-	SteamIdChatter  steamid.SteamId
-	SteamIdChatRoom steamid.SteamId
+	SteamIdChatter  SteamId
+	SteamIdChatRoom SteamId
 	ChatMsgType     EChatEntryType
 }
 
@@ -1799,19 +1800,19 @@ func (d *MsgClientChatMsg) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdChatter = steamid.SteamId(t0)
+	d.SteamIdChatter = SteamId(t0)
 	t1, err := rwu.ReadUint64(r)
 	if err != nil {
 		return err
 	}
-	d.SteamIdChatRoom = steamid.SteamId(t1)
+	d.SteamIdChatRoom = SteamId(t1)
 	t2, err := rwu.ReadInt32(r)
 	d.ChatMsgType = EChatEntryType(t2)
 	return err
 }
 
 type MsgClientChatMemberInfo struct {
-	SteamIdChat steamid.SteamId
+	SteamIdChat SteamId
 	Type        EChatInfoType
 }
 
@@ -1839,15 +1840,15 @@ func (d *MsgClientChatMemberInfo) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdChat = steamid.SteamId(t0)
+	d.SteamIdChat = SteamId(t0)
 	t1, err := rwu.ReadInt32(r)
 	d.Type = EChatInfoType(t1)
 	return err
 }
 
 type MsgClientChatAction struct {
-	SteamIdChat        steamid.SteamId
-	SteamIdUserToActOn steamid.SteamId
+	SteamIdChat        SteamId
+	SteamIdUserToActOn SteamId
 	ChatAction         EChatAction
 }
 
@@ -1879,20 +1880,20 @@ func (d *MsgClientChatAction) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdChat = steamid.SteamId(t0)
+	d.SteamIdChat = SteamId(t0)
 	t1, err := rwu.ReadUint64(r)
 	if err != nil {
 		return err
 	}
-	d.SteamIdUserToActOn = steamid.SteamId(t1)
+	d.SteamIdUserToActOn = SteamId(t1)
 	t2, err := rwu.ReadInt32(r)
 	d.ChatAction = EChatAction(t2)
 	return err
 }
 
 type MsgClientChatActionResult struct {
-	SteamIdChat        steamid.SteamId
-	SteamIdUserActedOn steamid.SteamId
+	SteamIdChat        SteamId
+	SteamIdUserActedOn SteamId
 	ChatAction         EChatAction
 	ActionResult       EChatActionResult
 }
@@ -1929,12 +1930,12 @@ func (d *MsgClientChatActionResult) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdChat = steamid.SteamId(t0)
+	d.SteamIdChat = SteamId(t0)
 	t1, err := rwu.ReadUint64(r)
 	if err != nil {
 		return err
 	}
-	d.SteamIdUserActedOn = steamid.SteamId(t1)
+	d.SteamIdUserActedOn = SteamId(t1)
 	t2, err := rwu.ReadInt32(r)
 	if err != nil {
 		return err
@@ -1946,7 +1947,7 @@ func (d *MsgClientChatActionResult) Deserialize(r io.Reader) error {
 }
 
 type MsgClientChatRoomInfo struct {
-	SteamIdChat steamid.SteamId
+	SteamIdChat SteamId
 	Type        EChatInfoType
 }
 
@@ -1974,15 +1975,15 @@ func (d *MsgClientChatRoomInfo) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdChat = steamid.SteamId(t0)
+	d.SteamIdChat = SteamId(t0)
 	t1, err := rwu.ReadInt32(r)
 	d.Type = EChatInfoType(t1)
 	return err
 }
 
 type MsgClientSetIgnoreFriend struct {
-	MySteamId     steamid.SteamId
-	SteamIdFriend steamid.SteamId
+	MySteamId     SteamId
+	SteamIdFriend SteamId
 	Ignore        uint8
 }
 
@@ -2014,12 +2015,12 @@ func (d *MsgClientSetIgnoreFriend) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.MySteamId = steamid.SteamId(t0)
+	d.MySteamId = SteamId(t0)
 	t1, err := rwu.ReadUint64(r)
 	if err != nil {
 		return err
 	}
-	d.SteamIdFriend = steamid.SteamId(t1)
+	d.SteamIdFriend = SteamId(t1)
 	d.Ignore, err = rwu.ReadUint8(r)
 	return err
 }
@@ -2106,7 +2107,7 @@ type MsgClientLogOnResponse struct {
 	Result                    EResult
 	OutOfGameHeartbeatRateSec int32
 	InGameHeartbeatRateSec    int32
-	ClientSuppliedSteamId     steamid.SteamId
+	ClientSuppliedSteamId     SteamId
 	IpPublic                  uint32
 	ServerRealTime            uint32
 }
@@ -2164,7 +2165,7 @@ func (d *MsgClientLogOnResponse) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.ClientSuppliedSteamId = steamid.SteamId(t1)
+	d.ClientSuppliedSteamId = SteamId(t1)
 	d.IpPublic, err = rwu.ReadUint32(r)
 	if err != nil {
 		return err
@@ -2219,14 +2220,14 @@ func (d *MsgClientServerUnavailable) Deserialize(r io.Reader) error {
 type MsgClientCreateChat struct {
 	ChatRoomType      EChatRoomType
 	GameId            uint64
-	SteamIdClan       steamid.SteamId
+	SteamIdClan       SteamId
 	PermissionOfficer EChatPermission
 	PermissionMember  EChatPermission
 	PermissionAll     EChatPermission
 	MembersMax        uint32
 	ChatFlags         uint8
-	SteamIdFriendChat steamid.SteamId
-	SteamIdInvited    steamid.SteamId
+	SteamIdFriendChat SteamId
+	SteamIdInvited    SteamId
 }
 
 func NewMsgClientCreateChat() *MsgClientCreateChat {
@@ -2294,7 +2295,7 @@ func (d *MsgClientCreateChat) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdClan = steamid.SteamId(t1)
+	d.SteamIdClan = SteamId(t1)
 	t2, err := rwu.ReadInt32(r)
 	if err != nil {
 		return err
@@ -2322,20 +2323,20 @@ func (d *MsgClientCreateChat) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdFriendChat = steamid.SteamId(t5)
+	d.SteamIdFriendChat = SteamId(t5)
 	t6, err := rwu.ReadUint64(r)
 	if err != nil {
 		return err
 	}
-	d.SteamIdInvited = steamid.SteamId(t6)
+	d.SteamIdInvited = SteamId(t6)
 	return err
 }
 
 type MsgClientCreateChatResponse struct {
 	Result            EResult
-	SteamIdChat       steamid.SteamId
+	SteamIdChat       SteamId
 	ChatRoomType      EChatRoomType
-	SteamIdFriendChat steamid.SteamId
+	SteamIdFriendChat SteamId
 }
 
 func NewMsgClientCreateChatResponse() *MsgClientCreateChatResponse {
@@ -2375,7 +2376,7 @@ func (d *MsgClientCreateChatResponse) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdChat = steamid.SteamId(t1)
+	d.SteamIdChat = SteamId(t1)
 	t2, err := rwu.ReadInt32(r)
 	if err != nil {
 		return err
@@ -2385,7 +2386,7 @@ func (d *MsgClientCreateChatResponse) Deserialize(r io.Reader) error {
 	if err != nil {
 		return err
 	}
-	d.SteamIdFriendChat = steamid.SteamId(t3)
+	d.SteamIdFriendChat = SteamId(t3)
 	return err
 }
 

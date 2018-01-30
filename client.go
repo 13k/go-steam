@@ -18,7 +18,7 @@ import (
 	. "github.com/faceit/go-steam/protocol"
 	. "github.com/faceit/go-steam/protocol/protobuf"
 	. "github.com/faceit/go-steam/protocol/steamlang"
-	. "github.com/faceit/go-steam/steamid"
+	"github.com/faceit/go-steam/steamid"
 )
 
 // Represents a client to the Steam network.
@@ -108,14 +108,17 @@ func (c *Client) RegisterPacketHandler(handler PacketHandler) {
 	c.handlers = append(c.handlers, handler)
 }
 
+// GetNextJobId returns the next job ID to use.
 func (c *Client) GetNextJobId() JobId {
 	return JobId(atomic.AddUint64(&c.currentJobId, 1))
 }
 
-func (c *Client) SteamId() SteamId {
-	return SteamId(atomic.LoadUint64(&c.steamId))
+// SteamId returns the client's steam ID.
+func (c *Client) SteamId() steamid.SteamId {
+	return steamid.SteamId(atomic.LoadUint64(&c.steamId))
 }
 
+// SessionId returns the session id.
 func (c *Client) SessionId() int32 {
 	return atomic.LoadInt32(&c.sessionId)
 }
@@ -197,7 +200,7 @@ func (c *Client) Disconnect() {
 func (c *Client) Write(msg IMsg) {
 	if cm, ok := msg.(IClientMsg); ok {
 		cm.SetSessionId(c.SessionId())
-		cm.SetSteamId(c.SteamId())
+		cm.SetSteamId(SteamId(c.SteamId()))
 	}
 	c.mutex.RLock()
 	defer c.mutex.RUnlock()

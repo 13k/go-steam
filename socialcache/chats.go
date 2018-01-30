@@ -3,7 +3,7 @@ package socialcache
 import (
 	"errors"
 	. "github.com/faceit/go-steam/protocol/steamlang"
-	. "github.com/faceit/go-steam/steamid"
+	"github.com/faceit/go-steam/steamid"
 	"sync"
 )
 
@@ -14,12 +14,12 @@ import (
 // 	}
 type ChatsList struct {
 	mutex sync.RWMutex
-	byId  map[SteamId]*Chat
+	byId  map[steamid.SteamId]*Chat
 }
 
 // Returns a new chats list
 func NewChatsList() *ChatsList {
-	return &ChatsList{byId: make(map[SteamId]*Chat)}
+	return &ChatsList{byId: make(map[steamid.SteamId]*Chat)}
 }
 
 // Adds a chat to the chat list
@@ -33,14 +33,14 @@ func (list *ChatsList) Add(chat Chat) {
 }
 
 // Removes a chat from the chat list
-func (list *ChatsList) Remove(id SteamId) {
+func (list *ChatsList) Remove(id steamid.SteamId) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	delete(list.byId, id)
 }
 
 // Adds a chat member to a given chat
-func (list *ChatsList) AddChatMember(id SteamId, member ChatMember) {
+func (list *ChatsList) AddChatMember(id steamid.SteamId, member ChatMember) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	chat := list.byId[id]
@@ -49,13 +49,13 @@ func (list *ChatsList) AddChatMember(id SteamId, member ChatMember) {
 		list.byId[id] = chat
 	}
 	if chat.ChatMembers == nil { //New chat
-		chat.ChatMembers = make(map[SteamId]ChatMember)
+		chat.ChatMembers = make(map[steamid.SteamId]ChatMember)
 	}
 	chat.ChatMembers[member.SteamId] = member
 }
 
 // Removes a chat member from a given chat
-func (list *ChatsList) RemoveChatMember(id SteamId, member SteamId) {
+func (list *ChatsList) RemoveChatMember(id steamid.SteamId, member steamid.SteamId) {
 	list.mutex.Lock()
 	defer list.mutex.Unlock()
 	chat := list.byId[id]
@@ -69,18 +69,18 @@ func (list *ChatsList) RemoveChatMember(id SteamId, member SteamId) {
 }
 
 // Returns a copy of the chats map
-func (list *ChatsList) GetCopy() map[SteamId]Chat {
+func (list *ChatsList) GetCopy() map[steamid.SteamId]Chat {
 	list.mutex.RLock()
 	defer list.mutex.RUnlock()
-	glist := make(map[SteamId]Chat)
+	glist := make(map[steamid.SteamId]Chat)
 	for key, chat := range list.byId {
 		glist[key] = *chat
 	}
 	return glist
 }
 
-// Returns a copy of the chat of a given SteamId
-func (list *ChatsList) ById(id SteamId) (Chat, error) {
+// Returns a copy of the chat of a given steamid.SteamId
+func (list *ChatsList) ById(id steamid.SteamId) (Chat, error) {
 	list.mutex.RLock()
 	defer list.mutex.RUnlock()
 	if val, ok := list.byId[id]; ok {
@@ -98,14 +98,14 @@ func (list *ChatsList) Count() int {
 
 // A Chat
 type Chat struct {
-	SteamId     SteamId `json:",string"`
-	GroupId     SteamId `json:",string"`
-	ChatMembers map[SteamId]ChatMember
+	SteamId     steamid.SteamId `json:",string"`
+	GroupId     steamid.SteamId `json:",string"`
+	ChatMembers map[steamid.SteamId]ChatMember
 }
 
 // A Chat Member
 type ChatMember struct {
-	SteamId         SteamId `json:",string"`
+	SteamId         steamid.SteamId `json:",string"`
 	ChatPermissions EChatPermission
 	ClanPermissions EClanPermission
 }

@@ -4,7 +4,6 @@ import (
 	. "github.com/faceit/go-steam/protocol"
 	. "github.com/faceit/go-steam/protocol/protobuf"
 	. "github.com/faceit/go-steam/protocol/steamlang"
-	. "github.com/faceit/go-steam/steamid"
 	"github.com/golang/protobuf/proto"
 )
 
