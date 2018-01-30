@@ -197,8 +197,8 @@ func (s SteamId) ToSteam3() string {
 	}
 
 	if renderInstance {
-		return fmt.Sprintf("[%v:%d:%d:%d]", accTypeChr, s.GetAccountUniverse(), s.GetAccountId(), accInstance)
+		return fmt.Sprintf("[%s:%d:%d:%d]", string(accTypeChr), s.GetAccountUniverse(), s.GetAccountId(), accInstance)
 	}
 
-	return fmt.Sprintf("[%v:%d:%d]", accTypeChr, s.GetAccountUniverse(), s.GetAccountId())
+	return fmt.Sprintf("[%s:%d:%d]", string(accTypeChr), s.GetAccountUniverse(), s.GetAccountId())
 }
