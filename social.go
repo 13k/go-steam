@@ -156,9 +156,11 @@ func (s *Social) RequestProfileInfo(id steamid.SteamId) {
 }
 
 // RequestOfflineMessages requests all offline messages and marks them as read
+/* TODO: Determine if this is possible to re-implement
 func (s *Social) RequestOfflineMessages() {
 	s.client.Write(NewClientMsgProtobuf(EMsg_ClientChatGetFriendMessageHistoryForOfflineMessages, &CMsgClientChatGetFriendMessageHistoryForOfflineMessages{}))
 }
+*/
 
 // JoinChat attempts to join a chat room
 func (s *Social) JoinChat(id steamid.SteamId) {
@@ -240,8 +242,8 @@ func (s *Social) HandlePacket(packet *Packet) {
 		s.handleIgnoreFriendResponse(packet)
 	case EMsg_ClientFriendProfileInfoResponse:
 		s.handleProfileInfoResponse(packet)
-	case EMsg_ClientFSGetFriendMessageHistoryResponse:
-		s.handleFriendMessageHistoryResponse(packet)
+		// case EMsg_ClientFSGetFriendMessageHistoryResponse:
+		// s.handleFriendMessageHistoryResponse(packet)
 	}
 }
 
@@ -599,6 +601,7 @@ func (s *Social) handleProfileInfoResponse(packet *Packet) {
 	})
 }
 
+/*
 func (s *Social) handleFriendMessageHistoryResponse(packet *Packet) {
 	body := new(CMsgClientChatGetFriendMessageHistoryResponse)
 	packet.ReadProtoMsg(body)
@@ -616,3 +619,4 @@ func (s *Social) handleFriendMessageHistoryResponse(packet *Packet) {
 		})
 	}
 }
+*/

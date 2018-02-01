@@ -1,16 +1,17 @@
 package steam
 
 import (
-	. "github.com/faceit/go-steam/protocol/protobuf"
+	"github.com/faceit/go-steam/protocol/protobuf"
 	. "github.com/faceit/go-steam/protocol/steamlang"
+	"github.com/faceit/go-steam/steamid"
 )
 
 type LoggedOnEvent struct {
 	Result         EResult
 	ExtendedResult EResult
 	AccountFlags   EAccountFlags
-	ClientSteamId  SteamId `json:",string"`
-	Body           *CMsgClientLogonResponse
+	ClientSteamId  steamid.SteamId `json:",string"`
+	Body           *protobuf.CMsgClientLogonResponse
 }
 
 type LogOnFailedEvent struct {

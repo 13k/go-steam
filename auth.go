@@ -118,7 +118,7 @@ func (a *Auth) handleLogOnResponse(packet *Packet) {
 			Result:         EResult(body.GetEresult()),
 			ExtendedResult: EResult(body.GetEresultExtended()),
 			AccountFlags:   EAccountFlags(body.GetAccountFlags()),
-			ClientSteamId:  SteamId(body.GetClientSuppliedSteamid()),
+			ClientSteamId:  steamid.SteamId(body.GetClientSuppliedSteamid()),
 			Body:           body,
 		})
 	} else if result == EResult_Fail || result == EResult_ServiceUnavailable || result == EResult_TryAnotherCM {
