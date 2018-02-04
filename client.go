@@ -62,7 +62,7 @@ type PacketHandler interface {
 
 func NewClient() *Client {
 	client := &Client{
-		events:   make(chan interface{}, 3),
+		events:   make(chan interface{}, 30),
 		writeBuf: new(bytes.Buffer),
 	}
 	client.Auth = &Auth{client: client}
